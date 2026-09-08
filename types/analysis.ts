@@ -40,7 +40,6 @@ export type AnalysisScore = {
 
 export type AnalysisSnapshot = {
   id: string;
-  user_id: string;
   owner: string;
   repo: string;
   result: AnalysisScore;

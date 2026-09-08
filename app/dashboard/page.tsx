@@ -51,18 +51,18 @@ export default function DashboardPage() {
   const healthScore = result?.overall ?? null;
 
   return (
-    <main className="min-h-screen bg-[#f4f5f0] p-5 md:p-10">
-      <div className="mx-auto max-w-[1400px] space-y-8">
+    <main className="min-h-screen bg-[#0d1117] p-5 text-[#c9d1d9] md:p-10">
+      <div className="mx-auto max-w-350 space-y-8">
         <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#3559e0]">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">
               Dashboard
             </p>
-            <h1 className="text-3xl font-bold tracking-tight text-[#17221f]">
+            <h1 className="text-3xl font-bold tracking-tight text-[#e6edf3]">
               {result?.repository.name ?? "Repository intelligence"}
             </h1>
           </div>
-          <Link href="/analyze" className="inline-flex h-8 items-center gap-2 rounded-lg bg-[#17221f] px-2.5 text-sm font-medium text-white transition hover:bg-[#3559e0]">
+          <Link href="/analyze" className="inline-flex h-8 items-center gap-2 rounded-lg bg-[#238636] px-2.5 text-sm font-medium text-white transition hover:bg-[#2ea043]">
             <Sparkles size={16} />
             Analyze repo
           </Link>
@@ -106,7 +106,7 @@ export default function DashboardPage() {
         </section>
 
         <section className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
-          <Card className="border-[#dce3dc] bg-white/80">
+          <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
             <CardHeader>
               <CardTitle>Project health</CardTitle>
             </CardHeader>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-[#dce3dc] bg-white/80">
+          <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
             <CardHeader>
               <CardTitle>Language mix</CardTitle>
             </CardHeader>
@@ -126,7 +126,7 @@ export default function DashboardPage() {
         </section>
 
         <section className="grid gap-6 xl:grid-cols-2">
-          <Card className="border-[#dce3dc] bg-white/80">
+          <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
             <CardHeader>
               <CardTitle>Commit activity</CardTitle>
             </CardHeader>
@@ -135,7 +135,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-[#dce3dc] bg-white/80">
+          <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
             <CardHeader>
               <CardTitle>Developer activity</CardTitle>
             </CardHeader>

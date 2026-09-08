@@ -19,7 +19,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("analysis_snapshots")
-    .select("id, user_id, owner, repo, result, created_at")
+    .select("id, owner, repo, result, created_at")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(50);

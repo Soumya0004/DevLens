@@ -66,10 +66,30 @@ export async function POST(request: Request) {
     ? Buffer.from(readmeData.content.replace(/\s/g, ""), "base64").toString("utf8")
     : "";
 
-  const codeQuality = Math.min(100, Math.max(45, Math.round(repoData.stargazers_count / 100)));
-  const documentation = Math.min(100, Math.max(35, Math.round((repoData.open_issues_count || 0) === 0 ? 90 : 70)));
-  const security = Math.min(100, Math.max(40, Math.round((Array.isArray(pulls) ? pulls.length : 0) * 7 + 55)));
-  const activity = Math.min(100, Math.max(30, Math.round((Array.isArray(commits) ? commits.length : 0) * 8 + 40)));
+  const commitCount = Array.isArray(commits) ? commits.length : 0;
+  const pullRequestCount = Array.isArray(pulls) ? pulls.length : 0;
+  const openPullRequestCount = Array.isArray(pulls) ? pulls.filter((pull) => pull.state === "open").length : 0;
+  const hasReadme = Boolean(readmeContent);
+  const hasDescription = Boolean(repoData.description);
+  const hasLicense = Boolean(repoData.license?.spdx_id && repoData.license.spdx_id !== "NOASSERTION");
+  const topicCount = Array.isArray(repoData.topics) ? repoData.topics.length : 0;
+  const contributorCount = Array.isArray(commits)
+    ? new Set(commits.map((commit) => commit.author?.login ?? commit.commit?.author?.email).filter(Boolean)).size
+    : 0;
+
+  // Each dimension uses a different set of observable GitHub signals so scores do not converge.
+  const codeQuality = Math.min(100, Math.max(35, Math.round(
+    42 + (hasLicense ? 12 : 0) + (repoData.has_issues ? 8 : 0) + Math.min(18, topicCount * 3) + Math.min(20, repoData.forks_count / 25),
+  )));
+  const documentation = Math.min(100, Math.max(25, Math.round(
+    25 + (hasReadme ? 35 : 0) + (hasDescription ? 15 : 0) + (hasLicense ? 10 : 0) + Math.min(15, topicCount * 2) + Math.min(10, readmeContent.length / 800),
+  )));
+  const security = Math.min(100, Math.max(35, Math.round(
+    78 - (repoData.archived ? 25 : 0) - (repoData.visibility === "public" ? 0 : 5) - Math.min(18, openPullRequestCount * 3) + (hasLicense ? 8 : 0),
+  )));
+  const activity = Math.min(100, Math.max(25, Math.round(
+    25 + Math.min(40, commitCount * 2) + Math.min(20, pullRequestCount * 2) + Math.min(15, contributorCount * 3),
+  )));
   const overall = Math.round((codeQuality + documentation + security + activity) / 4);
 
   const analysis = {

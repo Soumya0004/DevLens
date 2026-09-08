@@ -40,52 +40,51 @@ export default function HistoryPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-100 p-6 md:p-10">
+    <main className="min-h-screen bg-[#0d1117] p-6 text-[#c9d1d9] md:p-10">
       <div className="mx-auto max-w-5xl space-y-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">History</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">Recent analyses</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">History</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#e6edf3]">Recent analyses</h1>
         </div>
 
-        <Card className="border-slate-200 bg-white">
+        <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
           <CardHeader>
             <CardTitle>Repository scan history</CardTitle>
             <CardDescription>Track how your projects evolve over time.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {loading ? (
-              <div className="flex items-center gap-2 rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
+              <div className="flex items-center gap-2 rounded-xl bg-[#0d1117] p-5 text-sm text-[#8b949e]">
                 <Loader2 className="h-4 w-4 animate-spin" /> Loading saved analyses...
               </div>
             ) : error ? (
               <p className="rounded-xl bg-rose-50 p-5 text-sm text-rose-700">{error}</p>
             ) : snapshots.length === 0 ? (
-              <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
+              <div className="flex items-center gap-3 rounded-xl bg-[#0d1117] p-5 text-sm text-[#8b949e]">
                 <Database className="h-4 w-4" /> No saved analyses yet. Analyze a repository to create the first snapshot.
               </div>
             ) : snapshots.map((snapshot) => (
-              <details key={snapshot.id} className="rounded-xl border border-slate-200 p-4">
+              <details key={snapshot.id} className="rounded-xl border border-[#30363d] p-4">
                 <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0d1117] text-[#8b949e]">
                       <Activity className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-950">{snapshot.owner}/{snapshot.repo}</p>
-                      <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+                      <p className="font-semibold text-[#e6edf3]">{snapshot.owner}/{snapshot.repo}</p>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-[#8b949e]">
                         <Clock3 className="h-3 w-3" />
                         {new Date(snapshot.created_at).toLocaleString()}
                       </div>
-                      <p className="mt-1 font-mono text-[10px] text-slate-400">User ID: {snapshot.user_id}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Score</p>
-                      <p className="text-xl font-bold text-slate-950">{snapshot.result.overall}</p>
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#8b949e]">Score</p>
+                        <p className="text-xl font-bold text-[#e6edf3]">{snapshot.result.overall}</p>
                     </div>
-                    <div className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                    <div className="rounded-full bg-[#30363d] px-2.5 py-1 text-xs font-medium text-[#c9d1d9]">
                       {scoreLabel(snapshot.result.overall)}
                     </div>
                   </div>

@@ -48,6 +48,11 @@ export default function AnalyzePage() {
           setSelectedRepo(data[0].full_name);
           setRepoInput(data[0].html_url);
         }
+        const initialRepo = new URLSearchParams(window.location.search).get("repo");
+        if (initialRepo) {
+          setRepoInput(initialRepo);
+          setSelectedRepo(initialRepo.replace(/^https?:\/\/github\.com\//i, "").replace(/\/$/, ""));
+        }
       } catch (err) {
         setRepoLoadMessage(err instanceof Error ? err.message : "GitHub repositories could not be loaded");
       } finally {
@@ -118,10 +123,6 @@ export default function AnalyzePage() {
       setResult(data);
       setSelectedRepo(resolvedRepo);
       setRepoInput(`https://github.com/${resolvedRepo}`);
-      if (data.persisted) {
-        router.push("/dashboard");
-        return;
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "The repository could not be analyzed right now.");
       console.error(err);
@@ -131,17 +132,17 @@ export default function AnalyzePage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 p-6 md:p-10">
+    <main className="min-h-screen bg-[#0d1117] p-6 text-[#c9d1d9] md:p-10">
       <div className="mx-auto max-w-5xl space-y-8">
         <div className="space-y-3 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Analyze</p>
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950">Inspect a GitHub repository</h1>
-          <p className="mx-auto max-w-2xl text-slate-600">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">Analyze</p>
+          <h1 className="text-4xl font-bold tracking-tight text-[#e6edf3]">Inspect a GitHub repository</h1>
+          <p className="mx-auto max-w-2xl text-[#8b949e]">
             Paste the GitHub URL, or choose a repo from your account, and DevLens will score the project health.
           </p>
         </div>
 
-        <Card className="border-slate-200 bg-white shadow-lg shadow-slate-900/5">
+        <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3] shadow-lg shadow-black/20">
           <CardHeader>
             <CardTitle>Repository input</CardTitle>
             <CardDescription>Enter a GitHub URL or pick a repo from your account.</CardDescription>
@@ -160,47 +161,47 @@ export default function AnalyzePage() {
               </Button>
             </div>
 
-            {repos.length > 0 ? (
-              <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">Or use a repo from GitHub</p>
-                <select
-                  value={selectedRepo}
-                  onChange={(event) => {
-                    setSelectedRepo(event.target.value);
-                    setRepoInput(`https://github.com/${event.target.value}`);
-                  }}
-                  className="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
-                  disabled={loadingRepos || repos.length === 0}
-                >
-                  {loadingRepos ? (
-                    <option value="">Loading repositories...</option>
-                  ) : (
-                    repos.map((repo) => (
-                      <option key={repo.full_name} value={repo.full_name}>
-                        {repo.full_name}
-                      </option>
-                    ))
-                  )}
-                </select>
+            <div className="space-y-2 border-t border-[#30363d] pt-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label htmlFor="github-repository" className="text-xs font-medium uppercase tracking-[0.2em] text-[#8b949e]">Choose from your GitHub repositories</label>
+                {repoLoadMessage ? <Link href="/login?next=%2Fanalyze" className="text-xs font-semibold text-[#58a6ff] hover:text-white">Connect GitHub</Link> : null}
               </div>
-            ) : null}
-
-            {repoLoadMessage ? <p className="text-sm text-slate-500">{repoLoadMessage}</p> : null}
+              <select
+                id="github-repository"
+                value={selectedRepo}
+                onChange={(event) => {
+                  setSelectedRepo(event.target.value);
+                  setRepoInput(event.target.value ? `https://github.com/${event.target.value}` : "");
+                  setError("");
+                }}
+                className="h-11 w-full rounded-md border border-[#30363d] bg-[#0d1117] px-3 text-sm text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+                disabled={loadingRepos || repos.length === 0}
+              >
+                <option value="">{loadingRepos ? "Loading your GitHub repositories..." : repos.length ? "Select a repository to analyze" : "No connected repositories available"}</option>
+                {repos.map((repo) => (
+                  <option key={repo.full_name} value={repo.full_name}>
+                    {repo.full_name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-[#8b949e]">Selecting a repository fills the URL above. Your analysis still starts only when you press Analyze.</p>
+              {repoLoadMessage ? <p className="text-sm text-[#e3b341]">{repoLoadMessage} Use GitHub sign-in to load your private and accessible repositories.</p> : null}
+            </div>
 
             {error ? <p className="text-sm text-rose-600">{error}</p> : null}
 
-            <div className="flex flex-wrap gap-2 text-xs text-slate-500">
-              <span className="rounded-full bg-slate-100 px-3 py-1">Quality</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1">Security</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1">Documentation</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1">Activity</span>
+            <div className="flex flex-wrap gap-2 text-xs text-[#8b949e]">
+              <span className="rounded-full bg-[#30363d] px-3 py-1">Quality</span>
+              <span className="rounded-full bg-[#30363d] px-3 py-1">Security</span>
+              <span className="rounded-full bg-[#30363d] px-3 py-1">Documentation</span>
+              <span className="rounded-full bg-[#30363d] px-3 py-1">Activity</span>
             </div>
           </CardContent>
         </Card>
 
         {result ? (
           <div className="space-y-5">
-            <Card className="overflow-hidden border-slate-200 bg-white shadow-lg shadow-slate-900/5">
+            <Card className="overflow-hidden border-[#30363d] bg-[#161b22] text-[#e6edf3] shadow-lg shadow-black/20">
               <CardHeader className="border-b border-slate-100 bg-slate-950 text-white">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
                   <div>
@@ -258,21 +259,21 @@ export default function AnalyzePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-slate-200 bg-white">
+            <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BookOpen className="h-5 w-5 text-sky-600" /> README preview</CardTitle>
                 <CardDescription>{result.readme?.path ?? "README.md"} from the analyzed repository</CardDescription>
               </CardHeader>
               <CardContent>
                 {result.readme ? (
-                  <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap rounded-xl border border-slate-200 bg-slate-50 p-5 font-mono text-xs leading-6 text-slate-700">{result.readme.content}</pre>
+                  <pre className="max-h-128 overflow-auto whitespace-pre-wrap rounded-xl border border-[#30363d] bg-[#0d1117] p-5 font-mono text-xs leading-6 text-[#c9d1d9]">{result.readme.content}</pre>
                 ) : (
                   <div className="rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">No README file was found in this repository.</div>
                 )}
               </CardContent>
             </Card>
 
-            <Card className="border-slate-200 bg-white">
+            <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><GitPullRequest className="h-5 w-5 text-violet-600" /> Code review</CardTitle>
                 <CardDescription>Recent pull requests and commits, ordered newest first.</CardDescription>
@@ -298,7 +299,7 @@ export default function AnalyzePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-slate-200 bg-white">
+            <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
               <CardHeader>
                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                   <div><CardTitle className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-emerald-600" /> Prioritized recommendations</CardTitle><CardDescription>Start with the highest-impact actions.</CardDescription></div>
@@ -311,11 +312,26 @@ export default function AnalyzePage() {
                 ))}
               </CardContent>
             </Card>
+
+            <Card className="border-[#238636]/40 bg-[#161b22] text-[#e6edf3]">
+              <CardContent className="flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#3fb950]">Final step</p>
+                  <h2 className="mt-2 text-xl font-semibold text-[#e6edf3]">Turn this analysis into a better README.md</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#8b949e]">Review the repository findings first, then generate an editable README suggestion using this analysis.</p>
+                </div>
+                {result.persisted ? (
+                  <Link href={`/readme-suggestion?repo=${encodeURIComponent(selectedRepo)}`} className="inline-flex shrink-0 items-center justify-center gap-2 bg-[#238636] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2ea043]">Show suggested README.md <ArrowRight className="h-4 w-4" /></Link>
+                ) : (
+                  <span className="max-w-xs text-sm text-[#e3b341]">Save the analysis successfully to generate a README suggestion.</span>
+                )}
+              </CardContent>
+            </Card>
           </div>
         ) : null}
 
         <div className="grid gap-4 md:grid-cols-3">
-          <Card className="border-slate-200 bg-white">
+          <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" />
@@ -327,7 +343,7 @@ export default function AnalyzePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200 bg-white">
+          <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <ArrowRight className="h-4 w-4 text-sky-600" />
@@ -339,7 +355,7 @@ export default function AnalyzePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200 bg-white">
+          <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Search className="h-4 w-4 text-violet-600" />

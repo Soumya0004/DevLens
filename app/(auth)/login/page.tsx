@@ -43,10 +43,12 @@ export default function LoginPage() {
       return;
     }
 
+    const next = new URLSearchParams(window.location.search).get("next");
+    const redirectTarget = next?.startsWith("/") ? next : "/analyze";
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${window.location.origin}/callback`,
+        redirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(redirectTarget)}`,
       },
     });
 

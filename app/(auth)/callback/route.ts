@@ -5,6 +5,8 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
+  const next = url.searchParams.get("next");
+  const redirectTarget = next?.startsWith("/") ? next : "/analyze";
   const oauthError = url.searchParams.get("error_description") ?? url.searchParams.get("error");
 
   if (oauthError) {
@@ -27,5 +29,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=oauth", request.url));
   }
 
-  return NextResponse.redirect(new URL("/analyze", request.url));
+  return NextResponse.redirect(new URL(redirectTarget, request.url));
 }

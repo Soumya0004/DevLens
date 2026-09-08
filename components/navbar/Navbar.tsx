@@ -11,6 +11,7 @@ export default function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState<{ email?: string; avatarUrl?: string } | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -47,8 +48,8 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#e3ded4]/80 bg-[#f7f4ee]/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-[76px] max-w-[1400px] items-center justify-between px-5 md:px-10">
+    <header className="sticky top-0 z-50 border-b border-[#30363d] bg-[#0d1117]/95 text-[#e6edf3] backdrop-blur-xl">
+      <div className="mx-auto flex h-19 max-w-350 items-center justify-between px-5 md:px-10">
 
         <Link
           href="/"
@@ -59,11 +60,11 @@ export default function Navbar() {
           </div>
 
           <div>
-            <p className="text-base font-bold tracking-tight">
+            <p className="text-base font-bold tracking-tight text-[#e6edf3]">
               DevLens<span className="text-[#e7654b]">.</span>
             </p>
 
-            <p className="hidden text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:block">
+            <p className="hidden text-[10px] uppercase tracking-[0.18em] text-[#8b949e] sm:block">
               PROJECT INTELLIGENCE
             </p>
           </div>
@@ -72,27 +73,27 @@ export default function Navbar() {
         <nav className="hidden items-center gap-7 md:flex">
           <Link
             href="/"
-            className="text-sm font-semibold text-[#748093] transition hover:text-[#18243a]"
+            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
           >
             Home
           </Link>
 
           <Link
             href="/dashboard"
-            className="text-sm font-semibold text-[#748093] transition hover:text-[#18243a]"
+            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
           >
             Dashboard
           </Link>
 
           <Link
             href="/history"
-            className="text-sm font-semibold text-[#748093] transition hover:text-[#18243a]"
+            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
           >
             History
           </Link>
           <Link
             href="/database"
-            className="text-sm font-semibold text-[#748093] transition hover:text-[#18243a]"
+            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
           >
             Database
           </Link>
@@ -101,19 +102,19 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           <Link
             href="/login"
-            className={`${user ? "hidden" : "block"} rounded-lg px-3 py-2.5 text-sm font-semibold text-[#748093] transition hover:text-[#18243a]`}
+            className={`${user ? "hidden" : "block"} rounded-lg px-3 py-2.5 text-sm font-semibold text-[#8b949e] transition hover:text-white`}
           >
             Sign in
           </Link>
 
           {user ? (
             <>
-              <div className="hidden items-center gap-2 rounded-lg border border-[#e3ded4] px-3 py-2 sm:flex">
+              <div className="hidden items-center gap-2 rounded-lg border border-[#30363d] px-3 py-2 sm:flex">
                 {user.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={user.avatarUrl} alt="" className="h-6 w-6 rounded-full" />
-                ) : <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#18243a] text-xs font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>}
-                <span className="max-w-36 truncate text-xs font-semibold text-[#748093]">{user.email}</span>
+                ) : <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#238636] text-xs font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>}
+                <span className="max-w-36 truncate text-xs font-semibold text-[#8b949e]">{user.email}</span>
               </div>
               <button
                 type="button"
@@ -121,7 +122,7 @@ export default function Navbar() {
                 disabled={loggingOut}
                 aria-label="Log out"
                 title="Log out"
-                className="rounded-lg p-2.5 text-[#748093] transition hover:bg-[#e3ded4] hover:text-[#18243a] disabled:opacity-50"
+                className="rounded-lg p-2.5 text-[#8b949e] transition hover:bg-[#161b22] hover:text-white disabled:opacity-50"
               >
                 <LogOut size={18} />
               </button>
@@ -129,19 +130,29 @@ export default function Navbar() {
           ) : (
             <Link
               href="/dashboard"
-              className="group flex items-center gap-2 rounded-lg bg-[#e7654b] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#18243a]"
+              className="group flex items-center gap-2 rounded-lg bg-[#238636] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2ea043]"
             >
               <Sparkles size={15} className="text-[#f2c14e]" />
               Analyze
               <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           )}
-          <button aria-label="Open menu" className="rounded-lg p-2 text-[#18243a] md:hidden">
+          <button type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} className="rounded-lg p-2 text-[#e6edf3] md:hidden">
             <Menu size={20} />
           </button>
         </div>
 
       </div>
+
+      {menuOpen ? (
+        <nav className="border-t border-[#30363d] bg-[#0d1117] px-5 py-3 md:hidden">
+          <div className="mx-auto flex max-w-350 flex-col gap-1">
+            {[['/', 'Home'], ['/dashboard', 'Dashboard'], ['/history', 'History'], ['/database', 'Database']].map(([href, label]) => (
+              <Link key={href} href={href} onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-[#8b949e] hover:bg-[#161b22] hover:text-white">{label}</Link>
+            ))}
+          </div>
+        </nav>
+      ) : null}
 
     </header>
   );
