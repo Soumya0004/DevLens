@@ -3,16 +3,27 @@
 import { GitFork, Loader2, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      const next = new URLSearchParams(window.location.search).get("next");
+      router.replace(next?.startsWith("/") ? next : "/analyze");
+    });
+
     const timeoutId = window.setTimeout(() => {
       const params = new URLSearchParams(window.location.search);
       const error = params.get("error");
@@ -30,7 +41,7 @@ export default function LoginPage() {
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, []);
+  }, [router]);
 
   const handleGitHubLogin = async () => {
     setIsLoading(true);

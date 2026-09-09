@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, BookOpen, CheckCircle2, ExternalLink, GitCommit, GitPullRequest, Search, ShieldCheck, Star } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, ExternalLink, FileCode2, Folder, GitCommit, GitPullRequest, Search, ShieldCheck, Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -12,12 +12,68 @@ import { normalizeGithubUrl } from "@/lib/utils/github-url";
 import type { AnalysisScore, Recommendation } from "@/types/analysis";
 
 type GithubRepository = { full_name: string; name: string; html_url: string };
+type StructureNode = { name: string; type: "file" | "folder"; description?: string; children?: StructureNode[] };
+
+const applicationStructure: StructureNode[] = [
+  { name: "app", type: "folder", description: "Pages and server routes", children: [
+    { name: "page.tsx", type: "file", description: "Home page" },
+    { name: "analyze/page.tsx", type: "file", description: "Repository analysis workflow" },
+    { name: "dashboard/page.tsx", type: "file", description: "Health dashboard" },
+    { name: "api/analysis/route.ts", type: "file", description: "Builds analysis results" },
+  ] },
+  { name: "components", type: "folder", description: "Reusable interface pieces", children: [
+    { name: "home", type: "folder", description: "Home page sections" },
+    { name: "analyze", type: "folder", description: "Analysis result components" },
+    { name: "dashboard", type: "folder", description: "Charts and health cards" },
+    { name: "ui", type: "folder", description: "Shared buttons, cards, and motion" },
+  ] },
+  { name: "lib", type: "folder", description: "GitHub and Supabase services", children: [
+    { name: "github", type: "folder", description: "Repository data access" },
+    { name: "supabase", type: "folder", description: "Authentication and database" },
+  ] },
+  { name: "types", type: "folder", description: "Analysis and GitHub data shapes" },
+];
 
 const severityOrder: Record<Recommendation["severity"], number> = { high: 0, medium: 1, low: 2 };
 
 function formatDate(value: string) {
   if (!value) return "Date unavailable";
   return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
+}
+
+function CodeStructureCard() {
+  return (
+    <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2"><Folder className="h-5 w-5 text-sky-600" /> Code structure</CardTitle>
+        <CardDescription>See how the home page, analysis flow, services, and shared UI fit together.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-hidden rounded-xl border border-[#30363d] bg-[#0d1117]">
+          <div className="border-b border-[#30363d] px-4 py-3 font-mono text-xs text-[#8b949e]">devlens /</div>
+          <div className="divide-y divide-[#30363d]">
+            {applicationStructure.map((item) => <StructureItem key={item.name} item={item} />)}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function StructureItem({ item, depth = 0 }: { item: StructureNode; depth?: number }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div>
+      <button type="button" onClick={() => item.children && setExpanded((value) => !value)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition hover:bg-[#161b22]" style={{ paddingLeft: `${16 + depth * 20}px` }}>
+        {item.children ? <ChevronRight className={`h-4 w-4 text-[#8b949e] transition-transform ${expanded ? "rotate-90" : ""}`} /> : <span className="w-4" />}
+        {item.type === "folder" ? <Folder className="h-4 w-4 text-[#58a6ff]" /> : <FileCode2 className="h-4 w-4 text-[#8b949e]" />}
+        <span className="font-mono text-[#c9d1d9]">{item.name}</span>
+        {item.description ? <span className="ml-auto max-w-52 truncate text-xs text-[#8b949e]">{item.description}</span> : null}
+      </button>
+      {expanded && item.children ? <div className="border-l border-[#30363d]">{item.children.map((child) => <StructureItem key={child.name} item={child} depth={depth + 1} />)}</div> : null}
+    </div>
+  );
 }
 
 export default function AnalyzePage() {
@@ -258,6 +314,8 @@ export default function AnalyzePage() {
                 </div>
               </CardContent>
             </Card>
+
+            <CodeStructureCard />
 
             <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
               <CardHeader>
