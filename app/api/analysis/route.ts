@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { getGithubAccessToken } from "@/lib/github/auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -17,9 +18,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const accessToken = await getGithubAccessToken(supabase);
 
   const body = await request.json().catch(() => ({}));
   const owner = typeof body.owner === "string" ? body.owner.trim() : "";
@@ -32,7 +31,7 @@ export async function POST(request: Request) {
   const githubHeaders = {
     Accept: "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
-    ...(session?.provider_token ? { Authorization: `Bearer ${session.provider_token}` } : {}),
+    ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
   };
 
   const [repositoryResponse, commitsResponse, pullsResponse, readmeResponse] = await Promise.all([

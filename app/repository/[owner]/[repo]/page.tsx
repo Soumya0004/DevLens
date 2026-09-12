@@ -40,9 +40,9 @@ export default async function RepositoryPage({
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Repository</p>
-              <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">{repository.full_name}</h1>
+              <h1 className="mt-2 wrap-break-word text-3xl font-bold tracking-tight text-slate-950">{repository.full_name}</h1>
             </div>
             <div className="rounded-full bg-slate-950 px-3 py-1 text-sm font-semibold text-white">
               {Math.min(100, Math.max(50, Math.round(repository.stargazers_count / 100)))} / 100 health score

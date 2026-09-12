@@ -85,12 +85,12 @@ export default function DatabasePage() {
 
         <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
           <CardHeader>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <div>
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="min-w-0">
                 <CardTitle className="flex items-center gap-2 text-[#e6edf3]"><Database className="h-5 w-5 text-[#58a6ff]" /> Analysis snapshots</CardTitle>
                 <CardDescription>{visibleSnapshots.length} of {snapshots.length} records shown</CardDescription>
               </div>
-              <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="flex min-w-0 flex-col gap-2 sm:flex-row lg:shrink-0">
                 <label className="relative">
                   <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[#748093]" />
                   <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a repository" className="h-9 w-full rounded-lg border border-[#30363d] bg-[#0d1117] pl-9 pr-3 text-sm text-[#e6edf3] outline-none focus:border-[#58a6ff] sm:w-52" />
@@ -122,7 +122,7 @@ export default function DatabasePage() {
                     {visibleSnapshots.map((snapshot) => (
                       <Fragment key={snapshot.id}>
                       <tr key={snapshot.id} className="border-b border-[#30363d] last:border-0">
-                        <td className="px-3 py-4 font-semibold text-[#e6edf3]"><a href={snapshot.result.repository.htmlUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#58a6ff]">{snapshot.owner}/{snapshot.repo}<ExternalLink className="h-3.5 w-3.5" /></a></td>
+                        <td className="max-w-56 px-3 py-4 font-semibold text-[#e6edf3]"><a href={snapshot.result.repository.htmlUrl} target="_blank" rel="noreferrer" className="inline-flex max-w-full items-center gap-1.5 wrap-break-word hover:text-[#58a6ff]">{snapshot.owner}/{snapshot.repo}<ExternalLink className="h-3.5 w-3.5 shrink-0" /></a></td>
                         <td className="px-3 py-4 font-bold text-[#e6edf3]">{snapshot.result.overall}/100</td>
                         <td className="px-3 py-4 text-[#8b949e]">{snapshot.result.codeQuality}/100</td>
                         <td className="px-3 py-4 text-[#8b949e]">{snapshot.result.activity}/100</td>

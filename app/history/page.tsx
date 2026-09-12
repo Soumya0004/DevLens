@@ -66,20 +66,20 @@ export default function HistoryPage() {
             ) : snapshots.map((snapshot) => (
               <details key={snapshot.id} className="rounded-xl border border-[#30363d] p-4">
                 <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0d1117] text-[#8b949e]">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0d1117] text-[#8b949e]">
                       <Activity className="h-4 w-4" />
                     </div>
-                    <div>
-                      <p className="font-semibold text-[#e6edf3]">{snapshot.owner}/{snapshot.repo}</p>
-                      <div className="mt-1 flex items-center gap-2 text-xs text-[#8b949e]">
+                    <div className="min-w-0">
+                      <p className="wrap-break-word font-semibold text-[#e6edf3]">{snapshot.owner}/{snapshot.repo}</p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#8b949e]">
                         <Clock3 className="h-3 w-3" />
                         {new Date(snapshot.created_at).toLocaleString()}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex shrink-0 items-center gap-3 sm:gap-4">
                     <div className="text-right">
                         <p className="text-xs uppercase tracking-[0.2em] text-[#8b949e]">Score</p>
                         <p className="text-xl font-bold text-[#e6edf3]">{snapshot.result.overall}</p>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { getGithubAccessToken } from "@/lib/github/auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
@@ -19,12 +20,10 @@ export async function GET(request: Request) {
   const supabase = await createServerSupabaseClient();
 
   if (supabase) {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const accessToken = await getGithubAccessToken(supabase);
 
-    if (session?.provider_token) {
-      headers.Authorization = `Bearer ${session.provider_token}`;
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
     }
   }
 

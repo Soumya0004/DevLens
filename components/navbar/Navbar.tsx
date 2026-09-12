@@ -49,7 +49,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#30363d] bg-[#0d1117]/95 text-[#e6edf3] backdrop-blur-xl">
-      <div className="mx-auto flex h-19 max-w-350 items-center justify-between px-5 md:px-10">
+      <div className="mx-auto flex h-19 max-w-350 items-center justify-between gap-3 px-4 sm:px-5 md:px-10">
 
         <Link
           href="/"
@@ -99,10 +99,10 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-1 sm:gap-2">
           <Link
             href="/login"
-            className={`${user ? "hidden" : "block"} rounded-lg px-3 py-2.5 text-sm font-semibold text-[#8b949e] transition hover:text-white`}
+            className={`${user ? "hidden" : "block"} rounded-lg px-2 py-2.5 text-sm font-semibold text-[#8b949e] transition hover:text-white sm:px-3`}
           >
             Sign in
           </Link>
@@ -130,7 +130,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/dashboard"
-              className="group flex items-center gap-2 rounded-lg bg-[#238636] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2ea043]"
+              className="group hidden items-center gap-2 rounded-lg bg-[#238636] px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2ea043] sm:flex sm:px-4"
             >
               <Sparkles size={15} className="text-[#f2c14e]" />
               Analyze

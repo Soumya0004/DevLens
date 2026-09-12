@@ -29,5 +29,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=oauth", request.url));
   }
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session?.user && session.provider_token) {
+    await supabase.from("github_connections").upsert({
+      user_id: session.user.id,
+      access_token: session.provider_token,
+      updated_at: new Date().toISOString(),
+    });
+  }
+
   return NextResponse.redirect(new URL(redirectTarget, request.url));
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { getGithubAccessToken } from "@/lib/github/auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function GET() {
@@ -9,17 +10,15 @@ export async function GET() {
     return NextResponse.json({ error: "Supabase is not configured yet" }, { status: 503 });
   }
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const accessToken = await getGithubAccessToken(supabase);
 
-  if (!session?.provider_token) {
+  if (!accessToken) {
     return NextResponse.json({ error: "GitHub authentication required" }, { status: 401 });
   }
 
   const response = await fetch("https://api.github.com/user/repos?sort=updated&per_page=100", {
     headers: {
-      Authorization: `Bearer ${session.provider_token}`,
+      Authorization: `Bearer ${accessToken}`,
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
     },

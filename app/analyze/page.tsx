@@ -257,11 +257,11 @@ export default function AnalyzePage() {
 
         {result ? (
           <div className="space-y-5">
-            <Card className="overflow-hidden border-[#30363d] bg-[#161b22] text-[#e6edf3] shadow-lg shadow-black/20">
+            <Card className="min-w-0 overflow-hidden border-[#30363d] bg-[#161b22] text-[#e6edf3] shadow-lg shadow-black/20">
               <CardHeader className="border-b border-slate-100 bg-slate-950 text-white">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-                  <div>
-                    <CardTitle className="text-2xl">{result.repository.name}</CardTitle>
+                  <div className="min-w-0">
+                    <CardTitle className="wrap-break-word text-2xl">{result.repository.name}</CardTitle>
                     <CardDescription className="mt-2 text-slate-300">
                       {result.repository.description || "Repository health overview"}
                       {result.savedAt ? ` · Saved to database ${formatDate(result.savedAt)}` : ""}
@@ -341,7 +341,7 @@ export default function AnalyzePage() {
                   <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Pull requests</h3>
                   {result.codeReview.pullRequests.length ? result.codeReview.pullRequests.map((pull) => (
                     <a key={`${pull.url}-${pull.title}`} href={pull.url} target="_blank" rel="noreferrer" className="block rounded-xl border border-slate-200 p-4 transition-colors hover:bg-slate-50">
-                      <div className="flex items-start justify-between gap-3"><p className="font-semibold text-slate-900">{pull.title}</p><span className={`rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.15em] ${pull.state === "open" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{pull.state}</span></div>
+                      <div className="flex items-start justify-between gap-3"><p className="min-w-0 wrap-break-word font-semibold text-slate-900">{pull.title}</p><span className={`shrink-0 rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.15em] ${pull.state === "open" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{pull.state}</span></div>
                       <p className="mt-2 text-xs text-slate-500">{pull.author} · updated {formatDate(pull.updatedAt)}</p>
                     </a>
                   )) : <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No recent pull requests found.</p>}
@@ -350,7 +350,7 @@ export default function AnalyzePage() {
                   <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Recent commits</h3>
                   {result.codeReview.recentCommits.length ? result.codeReview.recentCommits.map((commit) => (
                     <a key={`${commit.url}-${commit.date}`} href={commit.url} target="_blank" rel="noreferrer" className="flex gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:bg-slate-50">
-                      <GitCommit className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" /><div><p className="font-semibold text-slate-900">{commit.message}</p><p className="mt-2 text-xs text-slate-500">{commit.author} · {formatDate(commit.date)}</p></div>
+                      <GitCommit className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" /><div className="min-w-0"><p className="wrap-break-word font-semibold text-slate-900">{commit.message}</p><p className="mt-2 wrap-break-word text-xs text-slate-500">{commit.author} · {formatDate(commit.date)}</p></div>
                     </a>
                   )) : <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No recent commits found.</p>}
                 </div>
@@ -366,7 +366,7 @@ export default function AnalyzePage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {[...result.recommendations].sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]).map((item: Recommendation) => (
-                  <div key={item.title} className="rounded-xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-center justify-between gap-3"><p className="font-semibold text-slate-900">{item.title}</p><span className="rounded-full bg-white px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-600">{item.severity}</span></div><p className="mt-2 text-sm text-slate-600">{item.description}</p></div>
+                  <div key={item.title} className="rounded-xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-start justify-between gap-3"><p className="min-w-0 wrap-break-word font-semibold text-slate-900">{item.title}</p><span className="shrink-0 rounded-full bg-white px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-600">{item.severity}</span></div><p className="mt-2 wrap-break-word text-sm text-slate-600">{item.description}</p></div>
                 ))}
               </CardContent>
             </Card>
