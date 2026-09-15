@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, ExternalLink, FileCode2, Folder, GitCommit, GitPullRequest, Search, ShieldCheck, Star } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { YellowHeading } from "@/components/ui/yellow-heading";
 import { Input } from "@/components/ui/input";
 import { normalizeGithubUrl } from "@/lib/utils/github-url";
 import type { AnalysisScore, Recommendation } from "@/types/analysis";
@@ -77,12 +77,12 @@ function StructureItem({ item, depth = 0 }: { item: StructureNode; depth?: numbe
 }
 
 export default function AnalyzePage() {
-  const router = useRouter();
   const [repos, setRepos] = useState<GithubRepository[]>([]);
   const [repoInput, setRepoInput] = useState("");
   const [selectedRepo, setSelectedRepo] = useState("");
   const [loadingRepos, setLoadingRepos] = useState(true);
   const [result, setResult] = useState<AnalysisScore | null>(null);
+  const [visibleCommitCount, setVisibleCommitCount] = useState(4);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState("");
   const [repoLoadMessage, setRepoLoadMessage] = useState("");
@@ -170,13 +170,13 @@ export default function AnalyzePage() {
       const data = await response.json().catch(() => null);
       if (!response.ok) {
         if (response.status === 401) {
-          router.replace("/login?next=%2Fanalyze");
           return;
         }
         throw new Error(data?.error || `Analysis failed (${response.status})`);
       }
 
       setResult(data);
+  setVisibleCommitCount(4);
       setSelectedRepo(resolvedRepo);
       setRepoInput(`https://github.com/${resolvedRepo}`);
     } catch (err) {
@@ -192,7 +192,7 @@ export default function AnalyzePage() {
       <div className="mx-auto max-w-5xl space-y-8">
         <div className="space-y-3 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">Analyze</p>
-          <h1 className="text-4xl font-bold tracking-tight text-[#e6edf3]">Inspect a GitHub repository</h1>
+            <YellowHeading className="text-4xl font-bold tracking-tight md:text-5xl">Inspect a GitHub repository</YellowHeading>
           <p className="mx-auto max-w-2xl text-[#8b949e]">
             Paste the GitHub URL, or choose a repo from your account, and DevLens will score the project health.
           </p>
@@ -337,22 +337,33 @@ export default function AnalyzePage() {
                 <CardDescription>Recent pull requests and commits, ordered newest first.</CardDescription>
               </CardHeader>
               <CardContent className="grid gap-6 lg:grid-cols-2">
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Pull requests</h3>
-                  {result.codeReview.pullRequests.length ? result.codeReview.pullRequests.map((pull) => (
-                    <a key={`${pull.url}-${pull.title}`} href={pull.url} target="_blank" rel="noreferrer" className="block rounded-xl border border-slate-200 p-4 transition-colors hover:bg-slate-50">
-                      <div className="flex items-start justify-between gap-3"><p className="min-w-0 wrap-break-word font-semibold text-slate-900">{pull.title}</p><span className={`shrink-0 rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.15em] ${pull.state === "open" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{pull.state}</span></div>
-                      <p className="mt-2 text-xs text-slate-500">{pull.author} · updated {formatDate(pull.updatedAt)}</p>
+                {result.codeReview.pullRequests.length ? (
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Pull requests</h3>
+                    {result.codeReview.pullRequests.map((pull) => (
+                      <a key={`${pull.url}-${pull.title}`} href={pull.url} target="_blank" rel="noreferrer" className="block rounded-xl border border-slate-200 p-4 transition-colors hover:bg-slate-50">
+                        <div className="flex items-start justify-between gap-3"><p className="min-w-0 wrap-break-word font-semibold text-slate-900">{pull.title}</p><span className={`shrink-0 rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.15em] ${pull.state === "open" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{pull.state}</span></div>
+                        <p className="mt-2 text-xs text-slate-500">{pull.author} · updated {formatDate(pull.updatedAt)}</p>
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+                <div className={`space-y-3 ${result.codeReview.pullRequests.length ? "" : "lg:col-span-2"}`}>
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-[#8b949e]">Recent commits</h3>
+                  {result.codeReview.recentCommits.length ? result.codeReview.recentCommits.slice(0, visibleCommitCount).map((commit) => (
+                    <a key={`${commit.url}-${commit.date}`} href={commit.url} target="_blank" rel="noreferrer" className="flex gap-3 rounded-xl border border-[#30363d] bg-[#0d1117] p-4 transition-colors hover:bg-[#1f2937]">
+                      <GitCommit className="mt-0.5 h-4 w-4 shrink-0 text-[#f2c14e]" /><div className="min-w-0"><p className="wrap-break-word font-semibold text-[#e6edf3]">{commit.message}</p><p className="mt-2 wrap-break-word text-xs text-[#8b949e]">{commit.author} · {formatDate(commit.date)}</p></div>
                     </a>
-                  )) : <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No recent pull requests found.</p>}
-                </div>
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Recent commits</h3>
-                  {result.codeReview.recentCommits.length ? result.codeReview.recentCommits.map((commit) => (
-                    <a key={`${commit.url}-${commit.date}`} href={commit.url} target="_blank" rel="noreferrer" className="flex gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:bg-slate-50">
-                      <GitCommit className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" /><div className="min-w-0"><p className="wrap-break-word font-semibold text-slate-900">{commit.message}</p><p className="mt-2 wrap-break-word text-xs text-slate-500">{commit.author} · {formatDate(commit.date)}</p></div>
-                    </a>
-                  )) : <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No recent commits found.</p>}
+                  )) : <p className="rounded-xl bg-[#0d1117] p-4 text-sm text-[#8b949e]">No recent commits found.</p>}
+                  {result.codeReview.recentCommits.length > 4 ? (
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCommitCount((count) => count >= result.codeReview.recentCommits.length ? 4 : count + 4)}
+                      className="w-full rounded-lg border border-[#30363d] px-4 py-2.5 text-sm font-semibold text-[#58a6ff] transition-colors hover:bg-[#161b22]"
+                    >
+                      {visibleCommitCount >= result.codeReview.recentCommits.length ? "Show less" : "View more"}
+                    </button>
+                  ) : null}
                 </div>
               </CardContent>
             </Card>

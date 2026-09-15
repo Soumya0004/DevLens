@@ -30,19 +30,7 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isProtectedRoute = ["/dashboard", "/analyze", "/history", "/database", "/settings", "/repository"]
-    .some((path) => request.nextUrl.pathname.startsWith(path));
-
-  if (!user && isProtectedRoute) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("next", request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
-  }
+  await supabase.auth.getUser();
 
   return response;
 }

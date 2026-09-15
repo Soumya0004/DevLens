@@ -6,27 +6,34 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const next = url.searchParams.get("next");
-  const redirectTarget = next?.startsWith("/") ? next : "/analyze";
+  const redirectTarget = next?.startsWith("/") && !next.startsWith("//") ? next : "/";
   const oauthError = url.searchParams.get("error_description") ?? url.searchParams.get("error");
 
+  const redirectWithError = (error: string, message?: string) => {
+    const errorUrl = new URL(redirectTarget, request.url);
+    errorUrl.searchParams.set("error", error);
+    if (message) errorUrl.searchParams.set("message", message);
+    return NextResponse.redirect(errorUrl);
+  };
+
   if (oauthError) {
-    return NextResponse.redirect(new URL(`/login?error=oauth&message=${encodeURIComponent(oauthError)}`, request.url));
+    return redirectWithError("oauth", oauthError);
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL("/login?error=missing_code", request.url));
+    return redirectWithError("missing_code");
   }
 
   const supabase = await createServerSupabaseClient();
 
   if (!supabase) {
-    return NextResponse.redirect(new URL("/login?error=configuration", request.url));
+    return redirectWithError("configuration");
   }
 
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    return NextResponse.redirect(new URL("/login?error=oauth", request.url));
+    return redirectWithError("oauth");
   }
 
   const {

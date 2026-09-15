@@ -115,6 +115,23 @@ input {
   }
 }
 
+@keyframes yellow-heading-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.yellow-heading {
+  animation: yellow-heading-reveal 0.9s ease-out both;
+}
+
 .yellow-line-loader {
   display: block;
   width: 8rem;
@@ -187,6 +204,10 @@ input {
 
   .yellow-line-loader > span {
     margin-left: 31%;
+    animation: none;
+  }
+
+  .yellow-heading {
     animation: none;
   }
 }

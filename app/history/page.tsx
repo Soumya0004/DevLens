@@ -4,6 +4,7 @@ import { Activity, Clock3, Database, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { YellowHeading } from "@/components/ui/yellow-heading";
 import type { AnalysisSnapshot } from "@/types/analysis";
 
 function scoreLabel(score: number) {
@@ -44,7 +45,7 @@ export default function HistoryPage() {
       <div className="mx-auto max-w-5xl space-y-6">
         <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">History</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#e6edf3]">Recent analyses</h1>
+            <YellowHeading className="mt-2 text-3xl font-bold tracking-tight">Recent analyses</YellowHeading>
         </div>
 
         <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">

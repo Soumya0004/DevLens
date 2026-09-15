@@ -1,11 +1,12 @@
 "use client";
 
 import { GitFork, Loader2, UserRoundPlus } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 
+import { OPEN_LOGIN_EVENT } from "@/components/auth/login-modal";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { YellowHeading } from "@/components/ui/yellow-heading";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
@@ -49,7 +50,7 @@ export default function SignupPage() {
             <UserRoundPlus size={20} strokeWidth={1.8} />
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-3xl font-bold tracking-tight text-slate-950">Create your account</CardTitle>
+            <YellowHeading as="h2" className="text-3xl font-bold tracking-tight">Create your account</YellowHeading>
             <CardDescription className="text-slate-500">
               Connect GitHub and start monitoring repository health in minutes.
             </CardDescription>
@@ -63,9 +64,13 @@ export default function SignupPage() {
           {errorMessage && <p className="text-center text-sm text-red-600" role="alert">{errorMessage}</p>}
           <p className="text-center text-sm text-slate-500">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-slate-900 underline-offset-4 hover:underline">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(OPEN_LOGIN_EVENT))}
+              className="font-semibold text-slate-900 underline-offset-4 hover:underline"
+            >
               Sign in
-            </Link>
+            </button>
           </p>
           <p className="text-center text-xs text-slate-400">One account, authenticated securely with GitHub OAuth</p>
         </CardContent>

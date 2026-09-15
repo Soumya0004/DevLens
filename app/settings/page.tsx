@@ -6,6 +6,7 @@ import { Check, GitBranch, Info, LogOut, Save, ShieldCheck, UserRound } from "lu
 import { useEffect, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
+import { YellowHeading } from "@/components/ui/yellow-heading";
 
 const defaultOrganizationKey = "devlens-default-organization";
 
@@ -65,7 +66,7 @@ export default function SettingsPage() {
       <div className="mx-auto max-w-4xl space-y-6">
         <header>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">Settings</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#e6edf3]">Control your DevLens workspace</h1>
+          <YellowHeading className="mt-2 text-3xl font-bold tracking-tight">Control your DevLens workspace</YellowHeading>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[#8b949e]">Settings explain how your account is used, where your analysis history belongs, and which repository preference should be ready next time.</p>
         </header>
 

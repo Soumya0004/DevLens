@@ -4,6 +4,7 @@ import { ChevronDown, Database, ExternalLink, Loader2, RefreshCw, Search, Slider
 import { Fragment, useEffect, useState } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { YellowHeading } from "@/components/ui/yellow-heading";
 import type { AnalysisSnapshot } from "@/types/analysis";
 
 export default function DatabasePage() {
@@ -66,7 +67,7 @@ export default function DatabasePage() {
         <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">Database</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#e6edf3]">Saved project intelligence</h1>
+            <YellowHeading className="mt-2 text-3xl font-bold tracking-tight">Saved project intelligence</YellowHeading>
             <p className="mt-2 max-w-2xl text-sm text-[#8b949e]">Browse every persisted snapshot and open a record to inspect the complete analysis payload.</p>
           </div>
           <button type="button" onClick={() => loadSnapshots(true)} disabled={loading || refreshing} className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-[#238636] px-3 text-sm font-semibold text-white transition hover:bg-[#2ea043] disabled:opacity-60">

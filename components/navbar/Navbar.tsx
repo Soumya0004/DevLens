@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowUpRight, GitBranch, LogOut, Menu, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { OPEN_LOGIN_EVENT } from "@/components/auth/login-modal";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
@@ -43,7 +44,6 @@ export default function Navbar() {
     setLoggingOut(true);
     await supabase.auth.signOut();
     setUser(null);
-    router.push("/login");
     router.refresh();
   };
 
@@ -100,12 +100,13 @@ export default function Navbar() {
         </nav>
 
         <div className="flex min-w-0 items-center gap-1 sm:gap-2">
-          <Link
-            href="/login"
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event(OPEN_LOGIN_EVENT))}
             className={`${user ? "hidden" : "block"} rounded-lg px-2 py-2.5 text-sm font-semibold text-[#8b949e] transition hover:text-white sm:px-3`}
           >
             Sign in
-          </Link>
+          </button>
 
           {user ? (
             <>

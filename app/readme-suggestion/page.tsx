@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Clipboard, Download, FileText, GitBranch, Loader2, Re
 import { useEffect, useState } from "react";
 
 import type { AnalysisSnapshot } from "@/types/analysis";
+import { YellowHeading } from "@/components/ui/yellow-heading";
 
 function buildReadme(snapshot: AnalysisSnapshot) {
   const { result } = snapshot;
@@ -79,7 +80,7 @@ export default function ReadmeSuggestionPage() {
           <div>
             <Link href="/analyze" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[#748093] hover:text-[#e7654b]"><ArrowLeft className="h-4 w-4" /> Back to analysis</Link>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#e7654b]">Post-analysis tool</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#18243a] md:text-4xl">README suggestion</h1>
+            <YellowHeading className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">README suggestion</YellowHeading>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[#748093]">A starting README generated from repository metadata, health scores, and the recommendations found in your latest analysis. Edit it before committing.</p>
           </div>
           <button type="button" onClick={() => void loadSnapshot(true)} disabled={loading || refreshing} className="inline-flex h-9 items-center justify-center gap-2 bg-[#18243a] px-3 text-sm font-semibold text-white transition hover:bg-[#e7654b] disabled:opacity-60"><RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} /> Refresh analysis</button>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Activity, GitBranch, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { YellowHeading } from "@/components/ui/yellow-heading";
 import { ActivityChart } from "@/components/dashboard/ActivityChart";
 import { CommitChart } from "@/components/dashboard/CommitChart";
 import { HealthScore } from "@/components/dashboard/HealthScore";
@@ -58,9 +59,9 @@ export default function DashboardPage() {
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#58a6ff]">
               Dashboard
             </p>
-            <h1 className="text-3xl font-bold tracking-tight text-[#e6edf3]">
+            <YellowHeading className="text-3xl font-bold tracking-tight">
               {result?.repository.name ?? "Repository intelligence"}
-            </h1>
+            </YellowHeading>
           </div>
           <Link href="/analyze" className="inline-flex h-8 items-center gap-2 rounded-lg bg-[#238636] px-2.5 text-sm font-medium text-white transition hover:bg-[#2ea043]">
             <Sparkles size={16} />
