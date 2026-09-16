@@ -71,7 +71,7 @@ export function LoginModal({ open, required = false, onClose }: LoginModalProps)
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({   
       provider: "github",
       options: {
         redirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(getCurrentTarget())}`,
