@@ -1,0 +1,5 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DevLens favicon">
+  <rect width="64" height="64" rx="16" fill="#0d1117"/>
+  <path d="M18 41V23h8.5c3.1 0 5.5 1.5 5.5 4.2 0 2.7-2.4 4.3-5.5 4.3H23v9.5H18zm5-12.1h2.9c1.7 0 2.8-.7 2.8-2.1 0-1.4-1.1-2.1-2.8-2.1H23v4.2zm21.5 12.1v-6.1h-8.8v-4.5h8.8v-5.3h-8.8V23H46v18h-2.5z" fill="#F6C453"/>
+  <circle cx="46" cy="18" r="6" fill="#3FB950"/>
+</svg>
