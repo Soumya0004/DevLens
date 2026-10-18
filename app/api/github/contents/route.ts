@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { getGithubAccessToken } from "@/lib/github/auth";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const owner = searchParams.get("owner");
@@ -10,10 +13,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "owner and repo are required" }, { status: 400 });
   }
 
-  const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+  const supabase = await createServerSupabaseClient();
+  const accessToken = supabase ? await getGithubAccessToken(supabase) : null;
+  const repositoryPath = `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
+  const endpoint = `${repositoryPath}/contents/${path.split("/").filter(Boolean).map(encodeURIComponent).join("/")}`;
+
+  const response = await fetch(`https://api.github.com${endpoint}`, {
     headers: {
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
     cache: "no-store",
   });

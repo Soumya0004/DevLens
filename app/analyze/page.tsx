@@ -8,31 +8,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { YellowHeading } from "@/components/ui/yellow-heading";
 import { Input } from "@/components/ui/input";
+import { OPEN_LOGIN_EVENT } from "@/components/auth/login-modal";
 import { normalizeGithubUrl } from "@/lib/utils/github-url";
 import type { AnalysisScore, Recommendation } from "@/types/analysis";
 
 type GithubRepository = { full_name: string; name: string; html_url: string };
-type StructureNode = { name: string; type: "file" | "folder"; description?: string; children?: StructureNode[] };
+type StructureNode = { name: string; path: string; type: "file" | "folder" };
+type GithubContentItem = { name: string; path: string; type: "file" | "dir" };
 
-const applicationStructure: StructureNode[] = [
-  { name: "app", type: "folder", description: "Pages and server routes", children: [
-    { name: "page.tsx", type: "file", description: "Home page" },
-    { name: "analyze/page.tsx", type: "file", description: "Repository analysis workflow" },
-    { name: "dashboard/page.tsx", type: "file", description: "Health dashboard" },
-    { name: "api/analysis/route.ts", type: "file", description: "Builds analysis results" },
-  ] },
-  { name: "components", type: "folder", description: "Reusable interface pieces", children: [
-    { name: "home", type: "folder", description: "Home page sections" },
-    { name: "analyze", type: "folder", description: "Analysis result components" },
-    { name: "dashboard", type: "folder", description: "Charts and health cards" },
-    { name: "ui", type: "folder", description: "Shared buttons, cards, and motion" },
-  ] },
-  { name: "lib", type: "folder", description: "GitHub and Supabase services", children: [
-    { name: "github", type: "folder", description: "Repository data access" },
-    { name: "supabase", type: "folder", description: "Authentication and database" },
-  ] },
-  { name: "types", type: "folder", description: "Analysis and GitHub data shapes" },
-];
+function toStructureNodes(contents: GithubContentItem[]): StructureNode[] {
+  return contents
+    .map((item) => ({
+      name: item.name,
+      path: item.path,
+      type: item.type === "dir" ? "folder" as const : "file" as const,
+    }))
+    .sort((first, second) => {
+      if (first.type !== second.type) return first.type === "folder" ? -1 : 1;
+      return first.name.localeCompare(second.name);
+    });
+}
 
 const severityOrder: Record<Recommendation["severity"], number> = { high: 0, medium: 1, low: 2 };
 
@@ -41,37 +36,121 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
 }
 
-function CodeStructureCard() {
+function CodeStructureCard({ repository }: { repository: string }) {
+  const [owner, repo] = repository.split("/");
+  const [structure, setStructure] = useState<StructureNode[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadStructure() {
+      setLoading(true);
+      setError("");
+
+      if (!owner || !repo) {
+        setError("Repository name is unavailable.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams({ owner, repo });
+        const response = await fetch(`/api/github/contents?${params}`, { cache: "no-store" });
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Repository structure could not be loaded.");
+        }
+
+        if (!cancelled) {
+          setStructure(toStructureNodes(Array.isArray(data) ? data : []));
+        }
+      } catch (loadError) {
+        if (!cancelled) {
+          setError(loadError instanceof Error ? loadError.message : "Repository structure could not be loaded.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadStructure();
+    return () => {
+      cancelled = true;
+    };
+  }, [owner, repo]);
+
   return (
     <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2"><Folder className="h-5 w-5 text-sky-600" /> Code structure</CardTitle>
-        <CardDescription>See how the home page, analysis flow, services, and shared UI fit together.</CardDescription>
+        <CardDescription>Browse files and folders in the analyzed repository.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="overflow-hidden rounded-xl border border-[#30363d] bg-[#0d1117]">
-          <div className="border-b border-[#30363d] px-4 py-3 font-mono text-xs text-[#8b949e]">devlens /</div>
-          <div className="divide-y divide-[#30363d]">
-            {applicationStructure.map((item) => <StructureItem key={item.name} item={item} />)}
-          </div>
+          <div className="border-b border-[#30363d] px-4 py-3 font-mono text-xs text-[#8b949e]">{repository} /</div>
+          {loading ? <p className="px-4 py-5 text-sm text-[#8b949e]">Loading repository files...</p> : null}
+          {!loading && error ? <p className="px-4 py-5 text-sm text-amber-300">{error}</p> : null}
+          {!loading && !error && structure.length === 0 ? <p className="px-4 py-5 text-sm text-[#8b949e]">No files were found for this repository.</p> : null}
+          {!loading && !error && structure.length > 0 ? (
+            <div className="divide-y divide-[#30363d]">
+              {structure.map((item) => <StructureItem key={item.name} item={item} owner={owner} repo={repo} />)}
+            </div>
+          ) : null}
         </div>
       </CardContent>
     </Card>
   );
 }
 
-function StructureItem({ item, depth = 0 }: { item: StructureNode; depth?: number }) {
+function StructureItem({ item, owner, repo, depth = 0 }: { item: StructureNode; owner: string; repo: string; depth?: number }) {
   const [expanded, setExpanded] = useState(false);
+  const [children, setChildren] = useState<StructureNode[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function toggleFolder() {
+    if (item.type !== "folder") return;
+    const nextExpanded = !expanded;
+    setExpanded(nextExpanded);
+    if (!nextExpanded || loaded || loading) return;
+
+    setLoading(true);
+    setError("");
+    try {
+      const params = new URLSearchParams({ owner, repo, path: item.path });
+      const response = await fetch(`/api/github/contents?${params}`, { cache: "no-store" });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.error || "Folder contents could not be loaded.");
+      }
+      setChildren(toStructureNodes(Array.isArray(data) ? data : []));
+      setLoaded(true);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Folder contents could not be loaded.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div>
-      <button type="button" onClick={() => item.children && setExpanded((value) => !value)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition hover:bg-[#161b22]" style={{ paddingLeft: `${16 + depth * 20}px` }}>
-        {item.children ? <ChevronRight className={`h-4 w-4 text-[#8b949e] transition-transform ${expanded ? "rotate-90" : ""}`} /> : <span className="w-4" />}
+      <button type="button" onClick={toggleFolder} aria-expanded={item.type === "folder" ? expanded : undefined} disabled={item.type === "file"} className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition hover:bg-[#161b22] disabled:hover:bg-transparent" style={{ paddingLeft: `${16 + depth * 20}px` }}>
+        {item.type === "folder" ? <ChevronRight className={`h-4 w-4 text-[#8b949e] transition-transform ${expanded ? "rotate-90" : ""}`} /> : <span className="w-4" />}
         {item.type === "folder" ? <Folder className="h-4 w-4 text-[#58a6ff]" /> : <FileCode2 className="h-4 w-4 text-[#8b949e]" />}
         <span className="font-mono text-[#c9d1d9]">{item.name}</span>
-        {item.description ? <span className="ml-auto max-w-52 truncate text-xs text-[#8b949e]">{item.description}</span> : null}
       </button>
-      {expanded && item.children ? <div className="border-l border-[#30363d]">{item.children.map((child) => <StructureItem key={child.name} item={child} depth={depth + 1} />)}</div> : null}
+      {expanded ? (
+        <div className="border-l border-[#30363d]">
+          {loading ? <p className="px-4 py-2 text-xs text-[#8b949e]">Loading folder...</p> : null}
+          {error ? <p className="px-4 py-2 text-xs text-amber-300">{error}</p> : null}
+          {!loading && !error && loaded && children.length === 0 ? <p className="px-4 py-2 text-xs text-[#8b949e]">This folder is empty.</p> : null}
+          {children.map((child) => <StructureItem key={child.path} item={child} owner={owner} repo={repo} depth={depth + 1} />)}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -93,7 +172,7 @@ export default function AnalyzePage() {
         const response = await fetch("/api/github/repos");
         if (!response.ok) {
           if (response.status === 401) {
-            setRepoLoadMessage("Your GitHub repository list is unavailable. Paste a public GitHub URL to continue.");
+            setRepoLoadMessage("GitHub authorization is missing or expired. Paste a public URL or reconnect GitHub to load your accessible repositories.");
             return;
           }
           throw new Error("GitHub repositories could not be loaded");
@@ -220,7 +299,7 @@ export default function AnalyzePage() {
             <div className="space-y-2 border-t border-[#30363d] pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <label htmlFor="github-repository" className="text-xs font-medium uppercase tracking-[0.2em] text-[#8b949e]">Choose from your GitHub repositories</label>
-                {repoLoadMessage ? <Link href="/login?next=%2Fanalyze" className="text-xs font-semibold text-[#58a6ff] hover:text-white">Connect GitHub</Link> : null}
+                {repoLoadMessage ? <button type="button" onClick={() => window.dispatchEvent(new Event(OPEN_LOGIN_EVENT))} className="text-xs font-semibold text-[#58a6ff] hover:text-white">Reconnect GitHub</button> : null}
               </div>
               <select
                 id="github-repository"
@@ -241,7 +320,7 @@ export default function AnalyzePage() {
                 ))}
               </select>
               <p className="text-xs text-[#8b949e]">Selecting a repository fills the URL above. Your analysis still starts only when you press Analyze.</p>
-              {repoLoadMessage ? <p className="text-sm text-[#e3b341]">{repoLoadMessage} Use GitHub sign-in to load your private and accessible repositories.</p> : null}
+              {repoLoadMessage ? <p className="text-sm text-[#e3b341]">{repoLoadMessage}</p> : null}
             </div>
 
             {error ? <p className="text-sm text-rose-600">{error}</p> : null}
@@ -315,7 +394,7 @@ export default function AnalyzePage() {
               </CardContent>
             </Card>
 
-            <CodeStructureCard />
+            <CodeStructureCard repository={result.repository.name} />
 
             <Card className="border-[#30363d] bg-[#161b22] text-[#e6edf3]">
               <CardHeader>
@@ -387,12 +466,12 @@ export default function AnalyzePage() {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#3fb950]">Final step</p>
                   <h2 className="mt-2 text-xl font-semibold text-[#e6edf3]">Turn this analysis into a better README.md</h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#8b949e]">Review the repository findings first, then generate an editable README suggestion using this analysis.</p>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#8b949e]">Generate an editable README.md from the repository files, project configuration, and analysis.</p>
                 </div>
                 {result.persisted ? (
-                  <Link href={`/readme-suggestion?repo=${encodeURIComponent(selectedRepo)}`} className="inline-flex shrink-0 items-center justify-center gap-2 bg-[#238636] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2ea043]">Show suggested README.md <ArrowRight className="h-4 w-4" /></Link>
+                  <Link href={`/readme-suggestion?repo=${encodeURIComponent(selectedRepo)}`} className="inline-flex shrink-0 items-center justify-center gap-2 bg-[#238636] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2ea043]">Create README.md <ArrowRight className="h-4 w-4" /></Link>
                 ) : (
-                  <span className="max-w-xs text-sm text-[#e3b341]">Save the analysis successfully to generate a README suggestion.</span>
+                  <span className="max-w-xs text-sm text-[#e3b341]">Save the analysis before creating a README.md.</span>
                 )}
               </CardContent>
             </Card>

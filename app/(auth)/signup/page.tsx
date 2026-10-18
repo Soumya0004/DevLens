@@ -27,6 +27,7 @@ export default function SignupPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
+        scopes: "repo",
         redirectTo: `${window.location.origin}/callback`,
       },
     });

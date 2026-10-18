@@ -103,7 +103,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new Event(OPEN_LOGIN_EVENT))}
-            className={`${user ? "hidden" : "block"} rounded-lg px-2 py-2.5 text-sm font-semibold text-[#8b949e] transition hover:text-white sm:px-3`}
+            className={`${user ? "hidden" : "block"} whitespace-nowrap rounded-lg px-2 py-2.5 text-sm font-semibold text-[#8b949e] transition hover:text-white sm:px-3`}
           >
             Sign in
           </button>

@@ -361,8 +361,7 @@ export default function Home() {
             </div>
 
             <h1
-              data-yellow-heading
-              className="max-w-2xl text-5xl font-bold leading-[0.95] tracking-tight text-[#0d1117] md:text-7xl"
+              className="max-w-2xl text-left text-5xl font-bold leading-[0.95] tracking-tight text-[#0d1117] md:text-7xl"
             >
               <span className="box-decoration-clone bg-[#f6c453] px-2 py-1">
                 Know the shape of a codebase before you change it.
@@ -701,10 +700,10 @@ export default function Home() {
             </p>
 
             <Link
-              href="/settings"
+              href="/privacy-policy"
               className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#58a6ff] hover:text-white"
             >
-              Review settings
+              Read the privacy policy
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -832,7 +831,7 @@ export default function Home() {
             </Link>
 
             <Link
-              href="#privacy-policy"
+              href="/privacy-policy"
               className="inline-flex items-center justify-center gap-2 border border-[#30363d] px-5 py-3 text-sm font-semibold text-[#c9d1d9] hover:border-[#58a6ff]"
             >
               Privacy policy

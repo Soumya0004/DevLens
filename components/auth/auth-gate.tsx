@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { LoginModal, OPEN_LOGIN_EVENT } from "@/components/auth/login-modal";
 
-const publicRoutes = ["/", "/signup", "/callback"];
+const publicRoutes = ["/", "/signup", "/callback", "/privacy-policy", "/terms"];
 
 function isPublicPath(pathname: string) {
   return publicRoutes.some(
