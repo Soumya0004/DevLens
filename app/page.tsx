@@ -8,6 +8,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import {
   ArrowRight,
+  Activity,
+  BookOpen,
   Check,
   ChevronRight,
   GitBranch,
@@ -123,8 +125,6 @@ export default function Home() {
           },
         )
 
-        .to("[data-island-compact]", { opacity: 0, duration: 0.2 }, "<0.1")
-
         .fromTo(
           "[data-island-expanded]",
 
@@ -132,8 +132,10 @@ export default function Home() {
 
           { opacity: 1, y: 0, duration: 0.5 },
 
-          "-=0.4",
+          "-=0.35",
         )
+
+        .to("[data-island-compact]", { opacity: 0, duration: 0.2 }, ">-0.2")
 
         .fromTo(
           "[data-island-stat]",
@@ -149,7 +151,7 @@ export default function Home() {
             ease: "back.out(1.5)",
           },
 
-          "-=0.3",
+          "-=0.15",
         ); // Section Fade-ups
 
       gsap.utils
@@ -345,7 +347,7 @@ export default function Home() {
   return (
     <main
       ref={homeRef}
-      className="min-h-screen overflow-hidden bg-[#0d1117] text-[#c9d1d9]"
+      className="home-page min-h-screen overflow-hidden bg-[#0d1117] text-[#c9d1d9]"
     >
       <section className="relative overflow-hidden border-b border-[#30363d]">
         <div
@@ -486,7 +488,7 @@ export default function Home() {
                     className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="h-2 w-2 rounded-full bg-[#3fb950]" />
+                      <Check className="h-4 w-4 text-[#3fb950]" aria-hidden="true" />
 
                       <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
                         Quality
@@ -503,7 +505,7 @@ export default function Home() {
                     className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="h-2 w-2 rounded-full bg-[#58a6ff]" />
+                      <BookOpen className="h-4 w-4 text-[#58a6ff]" aria-hidden="true" />
 
                       <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
                         Docs
@@ -520,7 +522,7 @@ export default function Home() {
                     className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="h-2 w-2 rounded-full bg-[#d29922]" />
+                      <ShieldCheck className="h-4 w-4 text-[#d29922]" aria-hidden="true" />
 
                       <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
                         Security
@@ -537,7 +539,7 @@ export default function Home() {
                     className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="h-2 w-2 rounded-full bg-[#ff7b72]" />
+                      <Activity className="h-4 w-4 text-[#ff7b72]" aria-hidden="true" />
 
                       <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
                         Activity
@@ -579,8 +581,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-350 px-5 py-20 md:px-10 md:py-28">
-        <div className="grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
+      <section className="mx-auto max-w-350 px-5 py-24 md:px-10 md:py-32">
+        <div className="grid gap-14 lg:grid-cols-[0.7fr_1.3fr]">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#58a6ff]">
               How it works
@@ -628,7 +630,7 @@ export default function Home() {
       </section>
 
       <section className="border-y border-[#30363d] bg-[#161b22]">
-        <div className="mx-auto grid max-w-350 gap-10 px-5 py-20 md:grid-cols-2 md:px-10 md:py-24">
+        <div className="mx-auto grid max-w-350 gap-12 px-5 py-24 md:grid-cols-2 md:px-10 md:py-32">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3fb950]">
               Built for useful decisions
@@ -655,7 +657,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <ValueCard
               title="Review"
               text="Focus attention on the risks that matter."
@@ -683,7 +685,7 @@ export default function Home() {
         id="privacy-policy"
         className="mx-auto max-w-350 px-5 py-20 md:px-10 md:py-24"
       >
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d29922]">
               Privacy policy
@@ -710,7 +712,7 @@ export default function Home() {
 
           <div
             data-gsap-privacy
-            className="border border-[#30363d] bg-[#161b22] p-6"
+            className="border border-[#30363d] bg-[#161b22] p-7 md:p-8"
           >
             <div className="flex items-center gap-2 border-b border-[#30363d] pb-4 font-mono text-xs text-[#8b949e]">
               <LockKeyhole className="h-4 w-4 text-[#3fb950]" />
@@ -751,7 +753,7 @@ export default function Home() {
         id="user-experience-review"
         className="border-y border-[#30363d] bg-[#161b22]"
       >
-        <div className="mx-auto grid max-w-350 gap-10 px-5 py-20 md:px-10 md:py-24 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="mx-auto grid max-w-350 gap-12 px-5 py-24 md:px-10 md:py-32 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#58a6ff]">
               User experience review
@@ -778,7 +780,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <ReviewCard
               title="Start clearly"
               text="One repository field and one obvious next action."
@@ -803,7 +805,7 @@ export default function Home() {
       </section>
 
       <section className="border-t border-[#30363d] bg-[#161b22]">
-        <div className="mx-auto flex max-w-350 flex-col gap-6 px-5 py-16 md:flex-row md:items-center md:justify-between md:px-10">
+        <div className="mx-auto flex max-w-350 flex-col gap-8 px-5 py-20 md:flex-row md:items-center md:justify-between md:px-10">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#58a6ff]">
               Ready to inspect?
@@ -821,7 +823,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <Link
               href="/analyze"
               className="inline-flex items-center justify-center gap-2 bg-[#238636] px-5 py-3 text-sm font-semibold text-white hover:bg-[#2ea043]"
@@ -919,7 +921,7 @@ function Step({
   text: string;
 }) {
   return (
-    <article className="grid gap-4 py-6 sm:grid-cols-[48px_32px_1fr] sm:items-start">
+    <article className="grid gap-5 py-8 sm:grid-cols-[48px_32px_1fr] sm:items-start">
       <span className="font-mono text-xs font-bold text-[#58a6ff]">
         {number}
       </span>
@@ -945,7 +947,7 @@ function ValueCard({
   return (
     <article
       data-gsap-card
-      className="border border-[#30363d] bg-[#0d1117] p-5 transition-colors duration-300 hover:border-[#58a6ff]"
+      className="border border-[#30363d] bg-[#0d1117] p-6 transition-colors duration-300 hover:border-[#58a6ff]"
     >
       <h3 className="font-semibold text-[#e6edf3]">{title}</h3>
 
@@ -966,7 +968,7 @@ function ReviewCard({
   return (
     <article
       data-gsap-card
-      className="border border-[#30363d] bg-[#0d1117] p-5 transition-colors duration-300 hover:border-[#58a6ff]"
+      className="border border-[#30363d] bg-[#0d1117] p-6 transition-colors duration-300 hover:border-[#58a6ff]"
     >
       <h3 className="font-semibold text-[#e6edf3]">{title}</h3>
 

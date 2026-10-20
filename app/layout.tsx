@@ -30,21 +30,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="site-theme min-h-full flex flex-col">
         <Navbar />
         <AuthGate>
           <PageMotion>{children}</PageMotion>
         </AuthGate>
-        <footer className="mt-auto border-t border-[#30363d] bg-[#0d1117] text-[#8b949e]">
+        <footer className="mt-auto border-t border-[#d50337]/25 bg-[#e9e3db] text-[#765862]">
           <div className="mx-auto flex max-w-350 flex-col gap-5 px-5 py-6 sm:flex-row sm:items-center sm:justify-between md:px-10">
-            <Link href="/" className="w-fit text-sm font-bold text-[#e6edf3] hover:text-white">
-              DevLens<span className="text-[#f6c453]">.</span>
+            <Link href="/" className="w-fit text-sm font-black uppercase text-[#d50337] hover:text-[#b4022e]">
+              DevLens<span className="text-[#d50337]">.</span>
             </Link>
             <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
-              <Link href="/" className="hover:text-white">Home</Link>
-              <Link href="/dashboard" className="hover:text-white">Dashboard</Link>
-              <Link href="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-white">Terms</Link>
+              <Link href="/" className="hover:text-[#d50337]">Home</Link>
+              <Link href="/dashboard" className="hover:text-[#d50337]">Dashboard</Link>
+              <Link href="/privacy-policy" className="hover:text-[#d50337]">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-[#d50337]">Terms</Link>
             </nav>
           </div>
         </footer>

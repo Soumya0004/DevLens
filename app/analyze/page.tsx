@@ -419,7 +419,7 @@ export default function AnalyzePage() {
               </CardHeader>
               <CardContent>
                 {result.readme ? (
-                  <pre className="max-h-128 overflow-auto whitespace-pre-wrap rounded-xl border border-[#30363d] bg-[#0d1117] p-5 font-mono text-xs leading-6 text-[#c9d1d9]">{result.readme.content}</pre>
+                  <pre className="readme-preview max-h-128 overflow-auto whitespace-pre-wrap rounded-xl border border-[#30363d] bg-[#0d1117] p-5 font-mono text-xs leading-6 text-[#c9d1d9]">{result.readme.content}</pre>
                 ) : (
                   <div className="rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">No README file was found in this repository.</div>
                 )}

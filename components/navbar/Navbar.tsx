@@ -48,23 +48,23 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#30363d] bg-[#0d1117]/95 text-[#e6edf3] backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[#d50337]/25 bg-[#e9e3db]/95 text-[#d50337] backdrop-blur-xl">
       <div className="mx-auto flex h-19 max-w-350 items-center justify-between gap-3 px-4 sm:px-5 md:px-10">
 
         <Link
           href="/"
           className="group flex items-center gap-3"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#18243a] text-[#f2c14e] transition group-hover:rotate-6">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#d50337] text-[#e9e3db] transition group-hover:rotate-6">
             <GitBranch size={18} strokeWidth={2.5} />
           </div>
 
           <div>
-            <p className="text-base font-bold tracking-tight text-[#e6edf3]">
-              DevLens<span className="text-[#e7654b]">.</span>
+            <p className="text-base font-black uppercase tracking-tight text-[#d50337]">
+              DevLens<span className="text-[#d50337]">.</span>
             </p>
 
-            <p className="hidden text-[10px] uppercase tracking-[0.18em] text-[#8b949e] sm:block">
+            <p className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-[#765862] sm:block">
               PROJECT INTELLIGENCE
             </p>
           </div>
@@ -73,27 +73,27 @@ export default function Navbar() {
         <nav className="hidden items-center gap-7 md:flex">
           <Link
             href="/"
-            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
+            className="text-sm font-semibold text-[#765862] transition hover:text-[#d50337]"
           >
             Home
           </Link>
 
           <Link
             href="/dashboard"
-            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
+            className="text-sm font-semibold text-[#765862] transition hover:text-[#d50337]"
           >
             Dashboard
           </Link>
 
           <Link
             href="/history"
-            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
+            className="text-sm font-semibold text-[#765862] transition hover:text-[#d50337]"
           >
             History
           </Link>
           <Link
             href="/database"
-            className="text-sm font-semibold text-[#8b949e] transition hover:text-white"
+            className="text-sm font-semibold text-[#765862] transition hover:text-[#d50337]"
           >
             Database
           </Link>
@@ -103,19 +103,19 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new Event(OPEN_LOGIN_EVENT))}
-            className={`${user ? "hidden" : "block"} whitespace-nowrap rounded-lg px-2 py-2.5 text-sm font-semibold text-[#8b949e] transition hover:text-white sm:px-3`}
+            className={`${user ? "hidden" : "block"} whitespace-nowrap rounded-lg px-2 py-2.5 text-sm font-semibold text-[#765862] transition hover:text-[#d50337] sm:px-3`}
           >
             Sign in
           </button>
 
           {user ? (
             <>
-              <div className="hidden items-center gap-2 rounded-lg border border-[#30363d] px-3 py-2 sm:flex">
+              <div className="hidden items-center gap-2 rounded-lg border border-[#d50337]/25 px-3 py-2 sm:flex">
                 {user.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={user.avatarUrl} alt="" className="h-6 w-6 rounded-full" />
-                ) : <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#238636] text-xs font-bold text-white">{user.email?.charAt(0).toUpperCase()}</span>}
-                <span className="max-w-36 truncate text-xs font-semibold text-[#8b949e]">{user.email}</span>
+                ) : <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#d50337] text-xs font-bold text-[#e9e3db]">{user.email?.charAt(0).toUpperCase()}</span>}
+                <span className="max-w-36 truncate text-xs font-semibold text-[#765862]">{user.email}</span>
               </div>
               <button
                 type="button"
@@ -123,7 +123,7 @@ export default function Navbar() {
                 disabled={loggingOut}
                 aria-label="Log out"
                 title="Log out"
-                className="rounded-lg p-2.5 text-[#8b949e] transition hover:bg-[#161b22] hover:text-white disabled:opacity-50"
+                className="rounded-lg p-2.5 text-[#765862] transition hover:bg-[#d50337]/10 hover:text-[#d50337] disabled:opacity-50"
               >
                 <LogOut size={18} />
               </button>
@@ -131,14 +131,14 @@ export default function Navbar() {
           ) : (
             <Link
               href="/dashboard"
-              className="group hidden items-center gap-2 rounded-lg bg-[#238636] px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2ea043] sm:flex sm:px-4"
+              className="group hidden items-center gap-2 rounded-lg bg-[#d50337] px-3 py-2.5 text-sm font-semibold text-[#e9e3db] transition hover:bg-[#b4022e] sm:flex sm:px-4"
             >
-              <Sparkles size={15} className="text-[#f2c14e]" />
+              <Sparkles size={15} className="text-[#e9e3db]" />
               Analyze
               <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           )}
-          <button type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} className="rounded-lg p-2 text-[#e6edf3] md:hidden">
+          <button type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} className="rounded-lg p-2 text-[#d50337] md:hidden">
             <Menu size={20} />
           </button>
         </div>
@@ -146,10 +146,10 @@ export default function Navbar() {
       </div>
 
       {menuOpen ? (
-        <nav className="border-t border-[#30363d] bg-[#0d1117] px-5 py-3 md:hidden">
+        <nav className="border-t border-[#d50337]/25 bg-[#e9e3db] px-5 py-3 md:hidden">
           <div className="mx-auto flex max-w-350 flex-col gap-1">
             {[['/', 'Home'], ['/dashboard', 'Dashboard'], ['/history', 'History'], ['/database', 'Database']].map(([href, label]) => (
-              <Link key={href} href={href} onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-[#8b949e] hover:bg-[#161b22] hover:text-white">{label}</Link>
+              <Link key={href} href={href} onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-[#765862] hover:bg-[#d50337]/10 hover:text-[#d50337]">{label}</Link>
             ))}
           </div>
         </nav>
