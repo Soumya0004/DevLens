@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, ExternalLink, FileCode2, Folder, GitCommit, GitPullRequest, Search, ShieldCheck, Star } from "lucide-react";
 import Link from "next/link";
 
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { YellowHeading } from "@/components/ui/yellow-heading";
 import { Input } from "@/components/ui/input";
 import { OPEN_LOGIN_EVENT } from "@/components/auth/login-modal";
+import { RepositoryArchitectureGraph } from "@/components/analyze/RepositoryArchitectureGraph";
 import { normalizeGithubUrl } from "@/lib/utils/github-url";
 import type { AnalysisScore, Recommendation } from "@/types/analysis";
 
@@ -161,8 +162,10 @@ export default function AnalyzePage() {
   const [selectedRepo, setSelectedRepo] = useState("");
   const [loadingRepos, setLoadingRepos] = useState(true);
   const [result, setResult] = useState<AnalysisScore | null>(null);
+  const [graphRevision, setGraphRevision] = useState(0);
   const [visibleCommitCount, setVisibleCommitCount] = useState(4);
   const [analyzing, setAnalyzing] = useState(false);
+  const analysisInFlight = useRef(false);
   const [error, setError] = useState("");
   const [repoLoadMessage, setRepoLoadMessage] = useState("");
 
@@ -222,6 +225,7 @@ export default function AnalyzePage() {
   };
 
   const handleAnalyze = async () => {
+    if (analysisInFlight.current) return;
     const resolvedRepo = resolveRepo();
     if (!resolvedRepo) {
       setError("Enter a valid GitHub URL like https://github.com/owner/repo or choose a repo.");
@@ -234,6 +238,7 @@ export default function AnalyzePage() {
       return;
     }
 
+    analysisInFlight.current = true;
     setAnalyzing(true);
     setError("");
 
@@ -249,19 +254,22 @@ export default function AnalyzePage() {
       const data = await response.json().catch(() => null);
       if (!response.ok) {
         if (response.status === 401) {
+          setError("Sign in and connect GitHub before analyzing a repository.");
           return;
         }
         throw new Error(data?.error || `Analysis failed (${response.status})`);
       }
 
       setResult(data);
-  setVisibleCommitCount(4);
+      setGraphRevision((revision) => revision + 1);
+      setVisibleCommitCount(4);
       setSelectedRepo(resolvedRepo);
       setRepoInput(`https://github.com/${resolvedRepo}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "The repository could not be analyzed right now.");
       console.error(err);
     } finally {
+      analysisInFlight.current = false;
       setAnalyzing(false);
     }
   };
@@ -334,8 +342,16 @@ export default function AnalyzePage() {
           </CardContent>
         </Card>
 
+        {analyzing && !result ? <RepositoryArchitectureGraph loading /> : null}
+
         {result ? (
           <div className="space-y-5">
+            <RepositoryArchitectureGraph
+              key={graphRevision}
+              architecture={result.architecture}
+              error={result.architectureError}
+              loading={analyzing}
+            />
             <Card className="min-w-0 overflow-hidden border-[#30363d] bg-[#161b22] text-[#e6edf3] shadow-lg shadow-black/20">
               <CardHeader className="border-b border-slate-100 bg-slate-950 text-white">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">

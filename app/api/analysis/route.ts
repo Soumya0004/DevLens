@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { buildRepositoryArchitecture } from "@/lib/analysis/architecture";
 import { getGithubAccessToken } from "@/lib/github/auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   const supabase = await createServerSupabaseClient();
@@ -24,7 +27,7 @@ export async function POST(request: Request) {
   const owner = typeof body.owner === "string" ? body.owner.trim() : "";
   const repo = typeof body.repo === "string" ? body.repo.trim() : "";
 
-  if (!owner || !repo) {
+  if (!/^[A-Za-z0-9_.-]{1,100}$/.test(owner) || !/^[A-Za-z0-9_.-]{1,100}$/.test(repo)) {
     return NextResponse.json({ error: "A repository owner and name are required" }, { status: 400 });
   }
 
@@ -34,30 +37,67 @@ export async function POST(request: Request) {
     ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
   };
 
-  const [repositoryResponse, commitsResponse, pullsResponse, readmeResponse] = await Promise.all([
-    fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      headers: githubHeaders,
-      cache: "no-store",
-    }),
-    fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=50`, {
-      headers: githubHeaders,
-      cache: "no-store",
-    }),
-    fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all&per_page=50`, {
-      headers: githubHeaders,
-      cache: "no-store",
-    }),
-    fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
-      headers: githubHeaders,
-      cache: "no-store",
-    }),
-  ]);
+  let repositoryResponse: Response;
+  let commitsResponse: Response;
+  let pullsResponse: Response;
+  let readmeResponse: Response;
+  try {
+    [repositoryResponse, commitsResponse, pullsResponse, readmeResponse] = await Promise.all([
+      fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: githubHeaders,
+        cache: "no-store",
+        signal: AbortSignal.timeout(15000),
+      }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=50`, {
+        headers: githubHeaders,
+        cache: "no-store",
+        signal: AbortSignal.timeout(15000),
+      }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all&per_page=50`, {
+        headers: githubHeaders,
+        cache: "no-store",
+        signal: AbortSignal.timeout(15000),
+      }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+        headers: githubHeaders,
+        cache: "no-store",
+        signal: AbortSignal.timeout(15000),
+      }),
+    ]);
+  } catch (error) {
+    console.error("Could not fetch GitHub repository analysis data:", error);
+    const timedOut = error instanceof Error && error.name === "TimeoutError";
+    return NextResponse.json(
+      { error: timedOut ? "GitHub request timed out. Please try again." : "GitHub could not be reached. Please try again." },
+      { status: 502 },
+    );
+  }
 
   if (!repositoryResponse.ok) {
-    return NextResponse.json({ error: "Repository not found" }, { status: repositoryResponse.status });
+    const rateLimited = repositoryResponse.status === 403
+      && repositoryResponse.headers.get("x-ratelimit-remaining") === "0";
+    return NextResponse.json(
+      { error: rateLimited ? "GitHub API rate limit reached. Try again later or connect a GitHub account." : "Repository not found or inaccessible." },
+      { status: rateLimited ? 429 : repositoryResponse.status },
+    );
   }
 
   const repoData = await repositoryResponse.json();
+  let architecture = null;
+  let architectureError: string | undefined;
+  try {
+    architecture = await buildRepositoryArchitecture({
+      owner,
+      repo,
+      branch: repoData.default_branch ?? "main",
+      headers: githubHeaders,
+    });
+  } catch (error) {
+    architectureError = error instanceof Error
+      ? error.message
+      : "The repository architecture could not be analyzed.";
+    console.error("Could not build repository architecture:", architectureError);
+  }
   const commits = await commitsResponse.json().catch(() => []);
   const pulls = await pullsResponse.json().catch(() => []);
   const readmeData = readmeResponse.ok ? await readmeResponse.json().catch(() => null) : null;
@@ -115,6 +155,8 @@ export async function POST(request: Request) {
       createdAt: repoData.created_at ?? null,
       updatedAt: repoData.updated_at ?? null,
     },
+    architecture,
+    architectureError,
     readme: readmeContent
       ? { path: readmeData.name ?? "README.md", content: readmeContent }
       : null,

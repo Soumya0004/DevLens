@@ -36,6 +36,60 @@ export type AnalysisScore = {
     recentCommits: CodeReviewCommit[];
   };
   recommendations: Recommendation[];
+  architecture?: RepositoryArchitecture | null;
+  architectureError?: string;
+};
+
+export type ArchitectureCategory =
+  | "repository"
+  | "route"
+  | "page"
+  | "component"
+  | "service"
+  | "model"
+  | "authentication"
+  | "external"
+  | "configuration"
+  | "test"
+  | "module";
+
+export type ArchitectureNode = {
+  id: string;
+  label: string;
+  filePath: string;
+  category: ArchitectureCategory;
+  description?: string;
+  metadata?: {
+    imports?: string[];
+    importedBy?: string[];
+    dependencyCount?: number;
+  };
+};
+
+export type ArchitectureEdge = {
+  id: string;
+  source: string;
+  target: string;
+  relationship: "imports" | "calls" | "uses" | "connectsTo";
+  confidence: "high" | "medium" | "low";
+};
+
+export type RepositoryArchitecture = {
+  repository: string;
+  languages: string[];
+  frameworks: string[];
+  warnings: string[];
+  nodes: ArchitectureNode[];
+  edges: ArchitectureEdge[];
+  metrics: {
+    totalFiles: number;
+    analyzedFiles: number;
+    totalNodes: number;
+    totalEdges: number;
+    circularDependencies: number;
+  };
+  categoryColors: Record<ArchitectureCategory, string>;
+  categoryOrder: ArchitectureCategory[];
 };
 
 export type AnalysisSnapshot = {
