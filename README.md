@@ -18,7 +18,7 @@ app/
 	api/analysis/           Server-side analysis endpoint
 	api/github/             GitHub proxy routes (repos, commits, contents, PRs)
 	dashboard/              Live repository dashboard
-	history/                Saved analysis history
+	history/                Saved analysis history and snapshot browser
 	repository/[owner]/[repo]/  Repository detail view
 	settings/               User and integration settings
 	globals.css             Global design tokens and visual system
@@ -28,6 +28,8 @@ lib/supabase/             Browser, server, and middleware Supabase clients
 supabase/migrations/      Database schema migrations
 types/                    Shared TypeScript contracts
 ```
+
+The `/database` URL redirects to `/history`; both previously showed the same saved analysis snapshots.
 
 ## Setup Process
 
