@@ -469,7 +469,7 @@ export default function Home() {
                     </div>
 
                     <h2 className="text-xl font-semibold text-[#e6edf3]">
-                      GitHub Project Analyzer
+                      Your repo, at a glance
                     </h2>
                   </div>
 
@@ -482,72 +482,72 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mt-6 pointer-events-auto">
+                <div className="grid grid-cols-2 gap-3 mt-5 pointer-events-auto">
                   <div
                     data-island-stat
-                    className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
+                    className="bg-[#0d1117] rounded-lg p-3 md:p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <Check className="h-4 w-4 text-[#3fb950]" aria-hidden="true" />
+                      <Check className="h-5 w-5 text-[#3fb950]" aria-hidden="true" />
 
-                      <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
+                      <p className="text-xs uppercase tracking-widest text-[#8b949e]">
                         Quality
                       </p>
                     </div>
 
-                    <p className="text-sm font-semibold text-[#e6edf3]">
-                      Strong foundation
+                    <p className="text-base font-semibold leading-snug text-[#e6edf3]">
+                      A solid base to build on
                     </p>
                   </div>
 
                   <div
                     data-island-stat
-                    className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
+                    className="bg-[#0d1117] rounded-lg p-3 md:p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <BookOpen className="h-4 w-4 text-[#58a6ff]" aria-hidden="true" />
+                      <BookOpen className="h-5 w-5 text-[#58a6ff]" aria-hidden="true" />
 
-                      <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
-                        Docs
+                      <p className="text-xs uppercase tracking-widest text-[#8b949e]">
+                        Documentation
                       </p>
                     </div>
 
-                    <p className="text-sm font-semibold text-[#e6edf3]">
-                      Up to date
+                    <p className="text-base font-semibold leading-snug text-[#e6edf3]">
+                      Easier for new teammates to start
                     </p>
                   </div>
 
                   <div
                     data-island-stat
-                    className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
+                    className="bg-[#0d1117] rounded-lg p-3 md:p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <ShieldCheck className="h-4 w-4 text-[#d29922]" aria-hidden="true" />
+                      <ShieldCheck className="h-5 w-5 text-[#d29922]" aria-hidden="true" />
 
-                      <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
+                      <p className="text-xs uppercase tracking-widest text-[#8b949e]">
                         Security
                       </p>
                     </div>
 
-                    <p className="text-sm font-semibold text-[#e6edf3]">
-                      2 warnings
+                    <p className="text-base font-semibold leading-snug text-[#e6edf3]">
+                      Spot issues before release
                     </p>
                   </div>
 
                   <div
                     data-island-stat
-                    className="bg-[#0d1117] rounded-lg p-4 border border-[#30363d]"
+                    className="bg-[#0d1117] rounded-lg p-3 md:p-4 border border-[#30363d]"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <Activity className="h-4 w-4 text-[#ff7b72]" aria-hidden="true" />
+                      <Activity className="h-5 w-5 text-[#ff7b72]" aria-hidden="true" />
 
-                      <p className="text-[10px] uppercase tracking-widest text-[#8b949e]">
+                      <p className="text-xs uppercase tracking-widest text-[#8b949e]">
                         Activity
                       </p>
                     </div>
 
-                    <p className="text-sm font-semibold text-[#e6edf3]">
-                      Needs review
+                    <p className="text-base font-semibold leading-snug text-[#e6edf3]">
+                      See how the project is moving
                     </p>
                   </div>
                 </div>
